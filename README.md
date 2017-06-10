@@ -1,5 +1,5 @@
 
-Suppose we have two **line processor** functions that take an lines as input and generates lines as output:
+Suppose we have two **line processor** functions that take lines as input and generate lines as output:
 
 
 ```python
