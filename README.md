@@ -96,12 +96,12 @@ for line in input_lines:
         del buffer[:]
 ```
 
-    From <generator object find_exclamations_gen at 0x7f77dc0af620>: Someone yelled 'Hello!'
-    From <generator object find_passwords_gen at 0x7f77dc0af0a0>: Username: foo
-    From <generator object find_passwords_gen at 0x7f77dc0af0a0>: Password: bar
-    From <generator object find_exclamations_gen at 0x7f77dc0af620>: Someone yelled 'Hello again!'
-    From <generator object find_passwords_gen at 0x7f77dc0af0a0>: Username: hello
-    From <generator object find_passwords_gen at 0x7f77dc0af0a0>: Password: world
+    From <generator object find_exclamations_gen at 0x7f58a8307620>: Someone yelled 'Hello!'
+    From <generator object find_passwords_gen at 0x7f58a8307048>: Username: foo
+    From <generator object find_passwords_gen at 0x7f58a8307048>: Password: bar
+    From <generator object find_exclamations_gen at 0x7f58a8307620>: Someone yelled 'Hello again!'
+    From <generator object find_passwords_gen at 0x7f58a8307048>: Username: hello
+    From <generator object find_passwords_gen at 0x7f58a8307048>: Password: world
 
 
 This works, but it is unfortunate that we lost the ability to use `yield` to send output out of the line processor functions.
@@ -110,10 +110,9 @@ We will get around this by using [PEP 535 -- Asynchronous Generators](https://ww
 
 
 ```python
-import asyncio
-@asyncio.coroutine
-def read_input_line():
-    return (yield None)
+class read_input_line:
+    def __await__(self):
+        return (yield None)
 
 async def find_passwords_async_gen():
     while True:
@@ -185,10 +184,9 @@ async def find_exclamations_async_iterable(async_iterable):
 
 
 ```python
-import asyncio
-@asyncio.coroutine
-def read_input_line():
-    return (yield None)
+class read_input_line:
+    def __await__(self):
+        return (yield None)
 
 async def read_input_lines():
     while True:
@@ -329,11 +327,10 @@ for idx, line in gather_processors(processor_functions_syncgen, input_lines):
 
 ## The full code
 
-The implementation below is a bit more general as it supports `yield` before/after the `async for line in iterable:` inside the asynchronous generators. For infini
+The implementation below is a bit more general as it supports `yield` before/after the `async for line in iterable:` inside the asynchronous generators.
 
 
 ```python
-import asyncio
 import functools
 import itertools
 
@@ -391,9 +388,9 @@ async def exclaim_async_iterable(async_iterable):
 assert list(exclaim_async_iterable([])) == ['Hello world!']
 assert list(count_passwords_async_iterable([])) == ['Total number of passwords:', '0']
 
-@asyncio.coroutine
-def read_input_line():
-    return (yield None)
+class read_input_line:
+    def __await__(self):
+        return (yield None)
 
 async def read_input_lines(sentinel):
     while True:
