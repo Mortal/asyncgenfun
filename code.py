@@ -1,4 +1,3 @@
-import asyncio
 import functools
 import itertools
 
@@ -56,9 +55,9 @@ async def exclaim_async_iterable(async_iterable):
 assert list(exclaim_async_iterable([])) == ['Hello world!']
 assert list(count_passwords_async_iterable([])) == ['Total number of passwords:', '0']
 
-@asyncio.coroutine
-def read_input_line():
-    return (yield None)
+class read_input_line:
+    def __await__(self):
+        return (yield None)
 
 async def read_input_lines(sentinel):
     while True:
